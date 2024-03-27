@@ -1,0 +1,11 @@
+/venv
+/build
+/dist
+
+models
+!models/original/.keep
+!models/resnet/.keep
+!models/efficientnet/.keep
+
+resources
+!resources/.keep
