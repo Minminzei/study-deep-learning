@@ -93,10 +93,10 @@ def save_json(json_path, history):
     data = json.load(open(json_path, "r"))
     data["epochs"] = EPOCHS if data["epochs"] is None else data["epochs"] + EPOCHS
     data["metrics"] = METRICS
-    data["loss"] = history["loss"]
-    data["val_loss"] = history["val_loss"]
-    data["measure"] = history[METRICS]
-    data["val_measure"] = history[f"val_{METRICS}"]
+    data["loss"] = history["loss"][-1]
+    data["val_loss"] = history["val_loss"][-1]
+    data["measure"] = history[METRICS][-1]
+    data["val_measure"] = history[f"val_{METRICS}"][-1]
     data["datetime"] = datetime.datetime.now().strftime("%m/%d %H:%M")
 
     with open(json_path, "w") as f:
