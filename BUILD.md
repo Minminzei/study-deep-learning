@@ -32,7 +32,7 @@ pip install --no-cache-dir -r requirements/macos.txt
 sh bin/download.sh
 ```
 
-## GPUサーバーで初期化する場合
+## GPUサーバーでの初期構築
 ```bash
 git clone https://github.com/Minminzei/study-deep-learning.git
 
@@ -41,8 +41,19 @@ export KAGGLE_KEY=kaggleのAPIキー
 
 cd study-deep-learning
 
-# python環境構築
-sh bin/setup.sh
-# datasetsをダウンロード
+sh bin/gpu_setup.sh
 sh bin/download.sh
+```
+
+## Google Colabでの初期構築
+```bash
+!git clone https://github.com/Minminzei/study-deep-learning.git
+
+%env KAGGLE_USERNAME=kaggleのユーザー名
+%env KAGGLE_KEY=kaggleのAPIキー
+
+%cd study-deep-learning.git
+
+!sh bin/colab_setup.sh
+!sh bin/download.sh
 ```
