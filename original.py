@@ -1,18 +1,18 @@
 import os
-from lib import common, conf
+from lib.common import train, predict
+from lib.conf import SIZE, CLASS_NAMES
 import keras
 
 model_dir = "models/original"
-model_path = f"{model_dir}/fromzero.keras"
 
 
-def build_model():
+def build_model(model_path: str):
     if os.path.exists(model_path):
         return keras.models.load_model(model_path)
 
     return keras.models.Sequential(
         [
-            keras.layers.Input(shape=(conf.SIZE, conf.SIZE, 3)),
+            keras.layers.Input(shape=(SIZE, SIZE, 3)),
             keras.layers.Conv2D(
                 16,
                 (3, 3),
@@ -42,6 +42,11 @@ def build_model():
                 (3, 3),
                 activation=keras.activations.relu,
             ),
+            keras.layers.Conv2D(
+                64,
+                (3, 3),
+                activation=keras.activations.relu,
+            ),
             keras.layers.Flatten(),
             keras.layers.Dense(
                 516,
@@ -51,7 +56,7 @@ def build_model():
                 256,
                 activation=keras.activations.relu,
             ),
-            keras.layers.Dense(len(conf.CLASS_NAMES), activation="softmax"),
+            keras.layers.Dense(len(CLASS_NAMES), activation="softmax"),
         ],
         name="original_model",
     )
@@ -59,15 +64,16 @@ def build_model():
 
 class Original:
     model = None
+    model_path = f"{model_dir}/fromzero.keras"
 
     def __init__(self):
-        self.model = build_model()
+        self.model = build_model(self.model_path)
 
     def summary(self):
         self.model.summary()
 
     def train(self):
-        common.train(self.model, model_path)
+        train(self.model, self.model_path)
 
-    def predict(self, image):
-        return common.predict(self.model, image)
+    def predict(self):
+        predict(self.model_path)

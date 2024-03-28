@@ -2,10 +2,8 @@
 /build
 /dist
 
-models
-!models/original/.keep
-!models/resnet/.keep
-!models/efficientnet/.keep
+models/*/*
+!models/*/.keep
 
-resources
-!resources/.keep
+resources/*
+!resources/tests
