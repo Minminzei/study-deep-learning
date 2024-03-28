@@ -1,0 +1,9 @@
+{
+    "epochs": null,
+    "metrics": null,
+    "loss": null,
+    "val_loss": null,
+    "measure": null,
+    "val_measure": null,
+    "datetime": null
+}

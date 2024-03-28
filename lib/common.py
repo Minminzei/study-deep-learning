@@ -4,6 +4,7 @@ import glob
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 import keras
 import keras.preprocessing.image as image
 from lib.conf import (
@@ -14,6 +15,9 @@ from lib.conf import (
     BATCH_SIZE,
     USE_EARLY_STOPPING,
     METRICS,
+    MODEL_DIR,
+    SEPARATOR,
+    VALIDATION_STEP,
 )
 
 
@@ -85,13 +89,25 @@ def visualize(history):
     fig.savefig(f"./models/graph/{datetime.datetime.now()}.png")
 
 
-def train(model, model_path):
+def save_json(json_path, history):
+    data = json.load(open(json_path, "r"))
+    data["epochs"] = EPOCHS if data["epochs"] is None else data["epochs"] + EPOCHS
+    data["metrics"] = METRICS
+    data["loss"] = history["loss"]
+    data["val_loss"] = history["val_loss"]
+    data["measure"] = history[METRICS]
+    data["val_measure"] = history[f"val_{METRICS}"]
+    data["datetime"] = datetime.datetime.now().strftime("%m/%d %H:%M")
+
+    with open(json_path, "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def train(model):
     train_data, validation_data = load_by_generator()
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=LEARNING_RATE),
-        loss=keras.losses.CategoricalCrossentropy(
-            from_logits=False
-        ),  # "categorical_crossentropy",
+        loss=keras.losses.CategoricalCrossentropy(from_logits=False),
         metrics=[METRICS],
     )
 
@@ -104,6 +120,7 @@ def train(model, model_path):
     history = model.fit(
         train_data,
         validation_data=validation_data,
+        validation_steps=VALIDATION_STEP,
         epochs=EPOCHS,
         batch_size=BATCH_SIZE,
         callbacks=(
@@ -111,21 +128,30 @@ def train(model, model_path):
         ),
     )
     visualize(history)
-    model.save(model_path)
+    model_name = model.name.replace(SEPARATOR, "/")
+    save_model(model, f"{MODEL_DIR}/{model_name}.keras")
+    save_json(f"{MODEL_DIR}/{model_name}.json", history.history)
 
 
-def predict(model_path: str):
-    if not os.path.exists(model_path):
-        print(f"{model_path} is not exists")
-        return
-
-    model = keras.models.load_model(model_path)
+def predict(model):
+    # 正解率
+    # クラスごとの適合率
+    # クラスごとの再現率
+    test_size = len(glob.glob("./resources/tests/*.jpg"))
+    accuracy = 0
+    results = []
     for file in glob.glob("./resources/tests/*.jpg"):
+        label = file.split("/")[-1].split("_")[0]
         img = image.load_img(file, target_size=(SIZE, SIZE))
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         image_tensor = np.vstack([x])
         result = model.predict(image_tensor)
-        print(result)
         top = tf.argmax(result, 1)
-        print(f"{file} is {CLASS_NAMES[top.numpy()[0]]}")
+        class_names = CLASS_NAMES[top.numpy()[0]]
+        results.append(f"predict:{class_names}/ label:{label}")
+        if label == class_names:
+            accuracy += 1
+
+    print(f"accuracy: {accuracy / test_size}")
+    print("\n".join(results))

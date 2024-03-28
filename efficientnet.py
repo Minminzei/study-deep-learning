@@ -1,61 +1,56 @@
 import os
-from lib import common, conf
+from lib.common import train, predict
+from lib.conf import SIZE, CLASS_NAMES, MODEL_DIR, SEPARATOR
 import keras
 
-model_dir = "models/efficientnet"
 
+def build_model_train(model_name: str, weights: str = None, trainable: bool = False):
+    if os.path.exists(f"{MODEL_DIR}/{model_name}.keras"):
+        return keras.models.load_model(f"{MODEL_DIR}/{model_name}.keras")
 
-def build_model_train(model_path: str, weights: str = None, trainable: bool = False):
-    if os.path.exists(model_path):
-        return keras.models.load_model(model_path)
-    if weights is None:
-        return keras.applications.EfficientNetB0(
-            weights=None, classes=len(conf.CLASS_NAMES)
-        )
-
-    model = keras.applications.EfficientNetB0(
-        weights="imagenet",
+    model = keras.applications.EfficientNetB4(
+        weights=weights,
         include_top=False,
-        input_shape=[conf.SIZE, conf.SIZE, 3],
+        input_shape=[SIZE, SIZE, 3],
     )
-    model.trainable = trainable
+    model.trainable = False if weights is None else trainable
     return keras.Sequential(
         [
             model,
-            keras.layers.GlobalAveragePooling2D(),
+            keras.layers.Flatten(),
             keras.layers.Dense(516, activation=keras.activations.relu),
-            keras.layers.Dense(
-                len(conf.CLASS_NAMES), activation="softmax", name="flower_prob"
-            ),
-        ]
+            keras.layers.Dense(len(CLASS_NAMES), activation="softmax"),
+        ],
+        name=model_name.replace("/", SEPARATOR),
     )
 
 
 def build_model(mode: str = "train"):
     if mode == "train":
-        model_path = f"{model_dir}/fromzero.keras"
-        return model_path, build_model_train(model_path, None, False)
-
+        model_name = "efficientnet/fromzero"
+        return model_name, build_model_train(model_name, None, False)
     elif mode == "transfer_learning":
-        model_path = f"{model_dir}/transfer_learning.keras"
-        return model_path, build_model_train(model_path, "imagenet", False)
+        model_name = "efficientnet/transfer_learning"
+        return model_name, build_model_train(model_name, "imagenet", False)
     else:
-        model_path = f"{model_dir}/fine_tuning.keras"
-        return model_path, build_model_train(model_path, "imagenet", True)
+        model_name = "efficientnet/fine_tuning"
+        return model_name, build_model_train(model_name, "imagenet", True)
 
 
 class EfficientNet:
     model = None
-    model_path = None
+    model_name = None
 
     def __init__(self, mode: str = "train"):
-        self.model_path, self.model = build_model(mode)
+        self.model_name, self.model = build_model(mode)
 
     def summary(self):
         self.model.summary()
+        print(self.model.name)
 
     def train(self):
-        common.train(self.model, self.model_path)
+        self.model.summary()
+        train(self.model)
 
     def predict(self):
-        common.predict(self.model_path)
+        predict(self.model)

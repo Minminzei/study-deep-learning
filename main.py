@@ -4,10 +4,6 @@ from resnet import ResNet
 from efficientnet import EfficientNet
 
 
-class AlexNet:
-    print("AlexNet")
-
-
 def summary(model: str):
     if model == "original":
         Original().summary()

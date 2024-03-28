@@ -7,7 +7,7 @@
 - 画像はそれぞれ`cat`:1668枚、`dog`:4863枚、`horse`:2623枚です。
 
 ## 環境構築
-[初期構築はこちらを参考](https://github.com/Minminzei/study-deep-learning/blob/main/README.md)
+[初期構築はこちらを参考](https://github.com/Minminzei/study-deep-learning/blob/main/BUILD.md)
 
 ```bash
 # venv起動
@@ -36,6 +36,9 @@ Y = 1 * 1 + 10 = 11, 正解は3なので+8の誤差がある
 
 # [regression.py]を実行してみる
 python regression.py
+
+# 200 epoch回すとy=2x+1の近いモデルが生成された
+# >  y = 2.012694835662842x + 0.9413922429084778
 ```
 
 ## 2. ニューラルネットワーク
@@ -111,21 +114,38 @@ python main.py predict -m original
 ```
 
 ## 4. 過学習への対応
-ニューラルネットワークの目的は汎化(generalization)能力を高めること。＝訓練データに予想ではなく、学習に使用していない未知のデータから正確に予想すること。
+ニューラルネットワークの目的は汎化能力(generalization)を高めること。＝訓練データの予測ではなく、学習に使用していないネットワークにとって未知のデータから正確に予測すること。訓練誤差が小さいのにもかかわらずテスト誤差が大きくなるとき、ネットワークは過学習(over fitting)を起こしている。
 
 #### 過学習
 ![過学習](https://github.com/Minminzei/faceswap-sample/assets/3320542/785a6ab7-a81f-4667-b808-2848ffbc3ce5)
 
 過学習への対策の第一歩はデータセットを訓練データ、検証データ、テストデータに分割すること。8:1:1に分けることが多い。
+他にも過学習が置き始めたら学習をストップする早期終了を行うことで過学習に対応する。
 
-|      |   |
+|  名称  | 説明  |
 |--------|------|
 | 訓練データ | 学習(train)に使うデータセット |
 | 検証データ | 検証(validation)に使うデータセット |
 | テストデータ | 推論(predict)に使うデータセット。汎化能力を測る |
+| 早期終了 | 訓練時のコールバック関数で一定の条件で学習を終了させる |
 
-- 他にもモデルアーキテクチャにドロップアウト層や正則化を加えることで過学習が起きにくいモデルを作れる。
-- 訓練時にcallbacksで過学習が置き始めたら学習を終了させるなどの早期終了を追加できる
+```bash
+model.fit(
+    # 訓練データ
+    train_data,
+    # 検証データ 3つのバッチグループに対して検証を行う
+    validation_data=validation_data,
+    validation_steps=3,
+    epochs=100,
+    # 早期終了
+    callbacks=[keras.callbacks.EarlyStopping(patience=3)],
+)
+```
+
+モデルアーキテクチャにドロップアウト層や正則化を加えることで過学習が起きにくいモデルを作ることができる。公開されているモデルの多くにはこれらが組み込まれている。
+
+#### ドロップアウト
+![ドロップアウト](https://github.com/takumiohym/practical-ml-vision-book-ja/blob/main/images/ch02/fig02-22.png?raw=true)
 
 ```bash
 model = keras.models.Sequential([
@@ -140,23 +160,6 @@ model = keras.models.Sequential([
     keras.layers.Dropout(0.2),
     ...
 ])
-
-model.compile(
-    optimizer=keras.optimizers.RMSprop(learning_rate=0.001),
-    loss=keras.losses.CategoricalCrossentropy(from_logits=False),
-    metrics=["accuracy"],
-)
-
-model.fit(
-    # 訓練データ
-    train_data,
-    # 検証データ 3つのバッチグループに対して検証を行う
-    validation_data=validation_data,
-    validation_steps=3,
-    epochs=100,
-    # 早期終了
-    callbacks=[keras.callbacks.EarlyStopping(patience=3)],
-)
 ```
 
 ## 5. モデル中心のアプローチ
@@ -172,19 +175,45 @@ model.fit(
 必要なラベル付きデータセットの数は`0からの学習 > ファインチューニング > 転移学習`の順になる。
 ＊必要枚数はあくまで参考。
 
+#### 5-2. 代表的なモデルアーキテクチャ
 
-モデルアーキテクチャ：モデルの構造。
+|  モデル名    |  特徴 | パラメーター数 | 論文URL |
+|--------|------|------| -----|
+| AlexNet | CVにCNNを適用した走り。relu関数を活性化関数に使うことで勾配消失をに強い深層NNを構築した | 370万 | [url](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf)|
+| ResNet(50) | AlexNetをより深くしたアーキテクチャ。層を増やすと勾配消失問題が発生するが、スキップ接続というアイディアで50-100層からのCNNを構築した | 2300万 | [url](https://arxiv.org/abs/1512.03385) |
+| EfficientNet(B4) | Compound Coefficientというアイディアで少ないパラメーターで高いパフォーマンスを出したすごいアーキテクチャ | 2000万 | [url](https://arxiv.org/abs/1905.11946) |
 
-#### 5-2. 転移学習、ファインチューニング
-学習済みweight
-転移学習
-ファインチューニング
+```bash
+# ResNet50を使用する 
+keras.applications.ResNet50(
+    # 使いたい訓練済みWeight。0から学習したい場合はNoneを指定
+    weights="imagenet",
+    input_shape=[SIZE, SIZE, 3],
+)
+```
 
-#### 5-3. 代表的なモデルアーキテクチャ
+#### 5-3. モデルの比較
+レポジトリでは次の3つのモデルアーキテクチャを使って性能を比較した。
+訓練済みのWeightは使わず、500epoch学習し、[猫 犬 馬]の3値クラス分類を解かせた。
 
-- AlexNet
-- ResNet
-- EfficientNet
+1. Original: 独自組んだCNNアーキテクチャ
+2. ResNet
+3. EfficientNet
+
+
+|  モデル名  |  検証データの正解率 | テストデータの正解率 |
+|--------|------|------| 
+| Original |60% | 60%| 
+| ResNet |60% | 60%| 
+| EfficientNet |60% | 60%| 
+
+```bash
+# 0からの学習
+python main.py train -m {original, resnet, efficientnet}
+# 推論
+python main.py predict -m {original, resnet, efficientnet}
+```
+
 
 ## 6. データ中心のアプローチ
 #### 6-1. 特徴量エンジニアリングと画像拡張

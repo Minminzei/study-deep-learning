@@ -15,10 +15,17 @@ LEARNING_RATE = 0.001
 USE_EARLY_STOPPING = False
 
 # エポック数
-EPOCHS = 100
+EPOCHS = 2
 
 # バッチサイズ
 BATCH_SIZE = 32
 
+# 検証ステップ
+VALIDATION_STEP = 1
+
 # 評価指標
 METRICS = "accuracy"  # ["accuracy", "precision", "recall", "f1"]
+
+
+MODEL_DIR = "models"
+SEPARATOR = "."

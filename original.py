@@ -1,14 +1,12 @@
 import os
 from lib.common import train, predict
-from lib.conf import SIZE, CLASS_NAMES
+from lib.conf import SIZE, CLASS_NAMES, MODEL_DIR, SEPARATOR
 import keras
 
-model_dir = "models/original"
 
-
-def build_model(model_path: str):
-    if os.path.exists(model_path):
-        return keras.models.load_model(model_path)
+def build_model(model_name: str):
+    if os.path.exists(f"{MODEL_DIR}/{model_name}.keras"):
+        return keras.models.load_model(f"{MODEL_DIR}/{model_name}.keras")
 
     return keras.models.Sequential(
         [
@@ -58,22 +56,23 @@ def build_model(model_path: str):
             ),
             keras.layers.Dense(len(CLASS_NAMES), activation="softmax"),
         ],
-        name="original_model",
+        name=model_name.replace("/", SEPARATOR),
     )
 
 
 class Original:
     model = None
-    model_path = f"{model_dir}/fromzero.keras"
+    model_name = "original/fromzero"
 
     def __init__(self):
-        self.model = build_model(self.model_path)
+        self.model = build_model(self.model_name)
 
     def summary(self):
         self.model.summary()
+        print(self.model.name)
 
     def train(self):
-        train(self.model, self.model_path)
+        train(self.model)
 
     def predict(self):
-        predict(self.model_path)
+        predict(self.model)
