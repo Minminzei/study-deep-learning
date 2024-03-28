@@ -57,3 +57,11 @@ sh bin/download.sh
 !sh bin/colab_setup.sh
 !sh bin/download.sh
 ```
+
+## Google ColabからDriveにモデルをアップロードする
+```bash
+from google.colab import drive
+drive.mount('/content/drive')
+
+!cp -R /content/study-deep-learning/models/resnet /content/drive/My\ Drive/
+```
