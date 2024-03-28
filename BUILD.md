@@ -47,12 +47,12 @@ sh bin/download.sh
 
 ## Google Colabでの初期構築
 ```bash
+
 !git clone https://github.com/Minminzei/study-deep-learning.git
+%cd /content/study-deep-learning
 
 %env KAGGLE_USERNAME=kaggleのユーザー名
 %env KAGGLE_KEY=kaggleのAPIキー
-
-%cd study-deep-learning.git
 
 !sh bin/colab_setup.sh
 !sh bin/download.sh

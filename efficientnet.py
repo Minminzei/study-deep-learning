@@ -34,24 +34,24 @@ def build_model_train(model_name: str, weights: str = None, trainable: bool = Fa
     # )
 
 
-def build_model(mode: str = "train"):
-    if mode == "train":
-        model_name = "efficientnet/fromzero"
-        return model_name, build_model_train(model_name, None, False)
-    elif mode == "transfer_learning":
+def build_model(type: str = "fromzero"):
+    if type == "fine_tuning":
+        model_name = "efficientnet/fine_tuning"
+        return model_name, build_model_train(model_name, "imagenet", True)
+    elif type == "transfer_learning":
         model_name = "efficientnet/transfer_learning"
         return model_name, build_model_train(model_name, "imagenet", False)
     else:
-        model_name = "efficientnet/fine_tuning"
-        return model_name, build_model_train(model_name, "imagenet", True)
+        model_name = "efficientnet/fromzero"
+        return model_name, build_model_train(model_name, None, False)
 
 
 class EfficientNet:
     model = None
     model_name = None
 
-    def __init__(self, mode: str = "train"):
-        self.model_name, self.model = build_model(mode)
+    def __init__(self, type: str = "fromzero"):
+        self.model_name, self.model = build_model(type)
 
     def summary(self):
         self.model.summary()

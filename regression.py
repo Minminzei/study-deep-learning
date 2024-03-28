@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 xdata = np.array([0, 1, 3, 5, 6], dtype=float)
 ydata = np.array([1, 3, 7, 11, 13], dtype=float)
-epochs = 200
+epochs = 50
 input = 10
 
 # modelビルド

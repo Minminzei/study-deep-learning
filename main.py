@@ -4,51 +4,37 @@ from resnet import ResNet
 from efficientnet import EfficientNet
 
 
-def summary(model: str):
+def summary(model: str, type: str = "fromzero"):
     if model == "original":
         Original().summary()
     elif model == "resnet":
-        ResNet().summary()
+        ResNet(type).summary()
     elif model == "efficientnet":
-        EfficientNet().summary()
+        EfficientNet(type).summary()
     else:
         print(f"サポートしていないモデルです: {model}")
 
 
-def train(model: str):
+def train(model: str, type: str = "fromzero"):
     if model == "original":
         Original().train()
     elif model == "resnet":
-        ResNet().train()
+        ResNet(type).train()
     elif model == "efficientnet":
-        EfficientNet().train()
+        EfficientNet(type).train()
     else:
         print(f"サポートしていないモデルです: {model}")
 
 
-def predict(model: str):
+def predict(model: str, type: str = "fromzero"):
     if model == "original":
         Original().predict()
     elif model == "resnet":
-        ResNet().predict()
+        ResNet(type).predict()
     elif model == "efficientnet":
-        EfficientNet().predict()
+        EfficientNet(type).predict()
     else:
         print(f"サポートしていないモデルです: {model}")
-
-
-def transfer_learning(model: str):
-    if model == "efficientnet":
-        EfficientNet("transfer_learning").train()
-    else:
-        print(f"転移学習で利用できるモデルはefficientnetのみです: {model}")
-
-
-def fine_tuning(model: str):
-    if model == "efficientnet":
-        EfficientNet("fine_tuning").train()
-    else:
-        print(f"ファインチューニングで利用できるモデルはefficientnetのみです: {model}")
 
 
 def get_args():
@@ -56,7 +42,7 @@ def get_args():
     parser.add_argument(
         "function_name",
         type=str,
-        help="実行するメソッド名{summary, train, predict, transfer_learning, fine_tuning}",
+        help="実行するメソッド名{summary, train, predict}",
     )
     parser.add_argument(
         "-m",
@@ -65,25 +51,26 @@ def get_args():
         help="学習モデル{original, resnet, efficientnet}",
         default="original",
     )
+    parser.add_argument(
+        "-t",
+        "--type",
+        type=str,
+        help="学習タイプ{fromzero, transfer_learning, fine_tuning}",
+        default="fromzero",
+    )
     return parser.parse_args()
 
 
 def _main():
     args = get_args()
     if args.function_name == "summary":
-        summary(args.model)
+        summary(args.model, args.type)
 
     elif args.function_name == "train":
-        train(args.model)
+        train(args.model, args.type)
 
     elif args.function_name == "predict":
-        predict(args.model)
-
-    elif args.function_name == "transfer_learning":
-        transfer_learning(args.model)
-
-    elif args.function_name == "fine_tuning":
-        fine_tuning(args.model)
+        predict(args.model, args.type)
 
 
 if __name__ == "__main__":
