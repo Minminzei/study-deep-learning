@@ -14,23 +14,13 @@ def build_model(model_name: str):
         input_shape=[SIZE, SIZE, 3],
     )
     resnet.trainable = True
-    return keras.Sequential(
-        [
-            resnet,
-            keras.layers.Flatten(),
-            keras.layers.Dense(516, activation=keras.activations.relu),
-            keras.layers.Dense(len(CLASS_NAMES), activation="softmax"),
-        ],
-        name=model_name.replace("/", SEPARATOR),
+    model = keras.layers.GlobalAveragePooling2D()(resnet.output)
+    model = keras.layers.Dense(
+        len(CLASS_NAMES), activation=keras.activations.softmax, name="classification"
+    )(model)
+    return keras.models.Model(
+        resnet.input, model, name=model_name.replace("/", SEPARATOR)
     )
-    # model = keras.layers.Flatten()(resnet.output)
-    # model = keras.layers.Dense(512, activation=keras.activations.relu)(model)
-    # model = keras.layers.Dense(len(CLASS_NAMES), activation=keras.activations.softmax)(
-    #     model
-    # )
-    # return keras.models.Model(
-    #     resnet.input, model, name=model_name.replace("/", SEPARATOR)
-    # )
 
 
 class ResNet:

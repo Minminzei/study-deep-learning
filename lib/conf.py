@@ -15,7 +15,7 @@ LEARNING_RATE = 0.001
 USE_EARLY_STOPPING = False
 
 # エポック数
-EPOCHS = 2
+EPOCHS = 100
 
 # バッチサイズ
 BATCH_SIZE = 32

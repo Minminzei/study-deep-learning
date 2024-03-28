@@ -54,7 +54,9 @@ def build_model(model_name: str):
                 256,
                 activation=keras.activations.relu,
             ),
-            keras.layers.Dense(len(CLASS_NAMES), activation="softmax"),
+            keras.layers.Dense(
+                len(CLASS_NAMES), activation="softmax", name="classification"
+            ),
         ],
         name=model_name.replace("/", SEPARATOR),
     )
