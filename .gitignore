@@ -3,7 +3,6 @@
 /dist
 
 models/*/*
-!models/*/*.json
 !models/*/*.keep
 
 resources/*
