@@ -7,7 +7,7 @@ psutil
 numexpr
 pillow
 scikit-learn
-tensorflow==2.15.0
+tensorflow
 tensorflow-datasets
 urllib3
 keras-tuner
