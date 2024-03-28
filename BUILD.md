@@ -31,3 +31,18 @@ pip install --no-cache-dir -r requirements.txt
 # datasetsをダウンロード
 sh bin/download.sh
 ```
+
+## GPUサーバーで初期化する場合
+```bash
+git clone git@github.com:Minminzei/study-deep-learning.git
+
+export KAGGLE_USERNAME=kaggleのユーザー名
+export KAGGLE_KEY=kaggleのAPIキー
+
+cd study-deep-learning
+
+# python環境構築
+sh bin/setup.sh
+# datasetsをダウンロード
+sh bin/download.sh
+```
