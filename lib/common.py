@@ -42,13 +42,6 @@ def load_by_generator():
         validation_split=0.2,
     )
 
-    # keras.utils.image_dataset_from_directory(
-    #     f"{path}/cat",
-    #     validation_split=0.2,
-    #     subset="training",
-    #     image_size=(SIZE, SIZE),
-    #     batch_size=BATCH_SIZE
-    # )
     train_generator = train_datagen.flow_from_directory(
         directory=path,
         target_size=(SIZE, SIZE),
@@ -110,18 +103,41 @@ def save_json(json_path, history):
         json.dump(data, f, indent=2)
 
 
+def dataset_from_directory():
+    path = "resources/animals10"
+    return keras.utils.image_dataset_from_directory(
+        path,
+        validation_split=0.2,
+        subset="training",
+        image_size=(SIZE, SIZE),
+        batch_size=BATCH_SIZE,
+        seed=123,
+        label_mode="categorical",
+    ), keras.utils.image_dataset_from_directory(
+        path,
+        validation_split=0.2,
+        subset="validation",
+        image_size=(SIZE, SIZE),
+        batch_size=BATCH_SIZE,
+        seed=123,
+        label_mode="categorical",
+    )
+
+
 def train(model):
-    train_data, validation_data = load_by_generator()
+    train_data, validation_data = dataset_from_directory()
+
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=LEARNING_RATE),
         loss=keras.losses.CategoricalCrossentropy(from_logits=False),
+        # CategoricalCrossentropy SparseCategoricalCrossentropy
         metrics=[METRICS],
     )
 
     print(
         f"epochs:{EPOCHS}\nbatch_size:{BATCH_SIZE}\n"
         + f"learning_rate:{LEARNING_RATE}\nmetrics:{METRICS}\n"
-        + f"classes: {train_data.class_indices}"
+        + f"classes: {train_data.class_names}"
     )
 
     history = model.fit(

@@ -13,7 +13,7 @@ def build_model_train(model_name: str, weights: str = None, trainable: bool = Fa
         include_top=False,
         input_shape=[SIZE, SIZE, 3],
     )
-    efficientnet.trainable = False if weights is None else trainable
+    efficientnet.trainable = True if weights is None else trainable
 
     model = keras.layers.GlobalAveragePooling2D()(efficientnet.output)
     model = keras.layers.Dense(
