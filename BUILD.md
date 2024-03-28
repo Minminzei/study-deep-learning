@@ -25,8 +25,8 @@ source venv/bin/activate
 # pip更新
 python -m pip install -U pip
 
-# パッケージインストール
-pip install --no-cache-dir -r requirements.txt
+# パッケージインストール(MAC)
+pip install --no-cache-dir -r requirements/macos.txt
 
 # datasetsをダウンロード
 sh bin/download.sh
@@ -34,7 +34,7 @@ sh bin/download.sh
 
 ## GPUサーバーで初期化する場合
 ```bash
-git clone git@github.com:Minminzei/study-deep-learning.git
+git clone https://github.com/Minminzei/study-deep-learning.git
 
 export KAGGLE_USERNAME=kaggleのユーザー名
 export KAGGLE_KEY=kaggleのAPIキー

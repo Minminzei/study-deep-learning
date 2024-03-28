@@ -8,7 +8,6 @@ numexpr
 pillow
 scikit-learn
 tensorflow
-tensorflow-metal
 tensorflow-datasets
 urllib3
 keras-tuner
