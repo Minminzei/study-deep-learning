@@ -14,6 +14,7 @@ def build_model_train(model_name: str, weights: str = None, trainable: bool = Fa
         input_shape=[SIZE, SIZE, 3],
     )
     efficientnet.trainable = False if weights is None else trainable
+
     model = keras.layers.GlobalAveragePooling2D()(efficientnet.output)
     model = keras.layers.Dense(
         len(CLASS_NAMES), activation=keras.activations.softmax, name="classification"
@@ -55,7 +56,6 @@ class EfficientNet:
 
     def summary(self):
         self.model.summary()
-        print(self.model.name)
 
     def train(self):
         self.model.summary()

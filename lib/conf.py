@@ -21,7 +21,7 @@ EPOCHS = 100
 BATCH_SIZE = 32
 
 # 検証ステップ
-VALIDATION_STEP = 1
+VALIDATION_STEP = 3
 
 # 評価指標
 METRICS = "accuracy"  # ["accuracy", "precision", "recall", "f1"]

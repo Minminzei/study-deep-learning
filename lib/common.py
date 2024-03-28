@@ -89,8 +89,15 @@ def visualize(history):
     fig.savefig(f"./models/graph/{datetime.datetime.now()}.png")
 
 
+def load_json(json_path):
+    if os.path.exists(json_path):
+        return json.load(open(json_path, "r"))
+
+    return json.load(open("./models/template.json", "r"))
+
+
 def save_json(json_path, history):
-    data = json.load(open(json_path, "r"))
+    data = load_json(json_path)
     data["epochs"] = EPOCHS if data["epochs"] is None else data["epochs"] + EPOCHS
     data["metrics"] = METRICS
     data["loss"] = history["loss"][-1]
@@ -127,10 +134,11 @@ def train(model):
             [keras.callbacks.EarlyStopping(patience=3)] if USE_EARLY_STOPPING else []
         ),
     )
-    visualize(history)
+
     model_name = model.name.replace(SEPARATOR, "/")
     save_model(model, f"{MODEL_DIR}/{model_name}.keras")
     save_json(f"{MODEL_DIR}/{model_name}.json", history.history)
+    visualize(history)
 
 
 def predict(model):

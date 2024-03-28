@@ -1,9 +1,0 @@
-{
-  "epochs": 102,
-  "metrics": "accuracy",
-  "loss": 1.0046014785766602,
-  "val_loss": 0.8736815452575684,
-  "measure": 0.5311945676803589,
-  "val_measure": 0.65625,
-  "datetime": "03/28 19:30"
-}
