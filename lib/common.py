@@ -57,10 +57,10 @@ def load_by_generator():
     return train_generator, validation_generator
 
 
-def visualize(history):
+def visualize(history, model_name: str):
     fig = plt.figure()
     fig.suptitle(
-        f"epochs:{EPOCHS} batch_size:{BATCH_SIZE} "
+        f"{model_name}\nepochs:{EPOCHS} batch_size:{BATCH_SIZE} "
         + f"learning_rate:{LEARNING_RATE} metrics:{METRICS}"
     )
     loss = fig.add_subplot(2, 1, 1)
@@ -135,7 +135,7 @@ def train(model):
     )
 
     print(
-        f"epochs:{EPOCHS}\nbatch_size:{BATCH_SIZE}\n"
+        f"model:{model.name}\nepochs:{EPOCHS}\nbatch_size:{BATCH_SIZE}\n"
         + f"learning_rate:{LEARNING_RATE}\nmetrics:{METRICS}\n"
         + f"classes: {train_data.class_names}"
     )
@@ -154,7 +154,7 @@ def train(model):
     model_name = model.name.replace(SEPARATOR, "/")
     save_model(model, f"{MODEL_DIR}/{model_name}.keras")
     save_json(f"{MODEL_DIR}/{model_name}.json", history.history)
-    visualize(history)
+    visualize(history, model.name)
 
 
 def predict(model):

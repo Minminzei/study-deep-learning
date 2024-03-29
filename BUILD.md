@@ -63,5 +63,5 @@ sh bin/download.sh
 from google.colab import drive
 drive.mount('/content/drive')
 
-!cp -R /content/study-deep-learning/models/resnet /content/drive/My\ Drive/
+!cp -R /content/study-deep-learning/models /content/drive/My\ Drive/
 ```
