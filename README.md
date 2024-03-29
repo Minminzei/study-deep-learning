@@ -2,9 +2,10 @@
 クラス分類の勉強会用のリポジトリです。
 
 ## ゴール
+- [猫 犬 馬]の3値分類を行う
 - validationでの正解率が95%を超えること
 - test画像を100%の正解率で分類できること
-- 画像はそれぞれ`cat`:1668枚、`dog`:4863枚、`horse`:2623枚です。
+- 画像はそれぞれ`cat`:1668枚、`dog`:4863枚、`horse`:2623枚
 
 ## 環境構築
 [初期構築はこちらを参考](https://github.com/Minminzei/study-deep-learning/blob/main/BUILD.md)
@@ -59,8 +60,8 @@ python regression.py
 
 
 ## 2-2. CNN(convolutional nueral network)
-- 畳み込み層とプーリング層を繰り返して、画像の特徴を抽出していく
-- 抽出された特徴を全結合層に渡して、分類問題などを解く
+- 畳み込み層とプーリング層を繰り返して、画像の特徴を抽出していく(表現学習)
+- 抽出された特徴を全結合層に渡して、分類問題などを解く(分類ヘッダ)
 
 ![CNN](https://developers.google.com/static/machine-learning/practica/image-classification/images/cnn_architecture.svg)
 
@@ -185,7 +186,7 @@ model = keras.models.Sequential([
 |--------|------|------| -----|
 | AlexNet | CVにCNNを適用した走り。relu関数を活性化関数に使うことで勾配消失をに強い深層NNを構築した | 370万 | [url](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf)|
 | ResNet(50) | AlexNetをより深くしたアーキテクチャ。層を増やすと勾配消失問題が発生するが、スキップ接続というアイディアで50-100層からのCNNを構築した | 2300万 | [url](https://arxiv.org/abs/1512.03385) |
-| EfficientNet(B4) | Compound Coefficientというアイディアで少ないパラメーターで高いパフォーマンスを出したすごいアーキテクチャ | 2000万 | [url](https://arxiv.org/abs/1905.11946) |
+| EfficientNet(B4) | Compound Coefficientというアイディアで少ないパラメーターで高いパフォーマンスを出したすごいアーキテクチャ。転移学習がやりやすいと評判。 | 2000万 | [url](https://arxiv.org/abs/1905.11946) |
 
 ```bash
 # ResNet50を使用する 
@@ -246,10 +247,10 @@ ResNetとEfficientNetを対象に転移学習、ファインチューニング�
 - 検証データの正解率は表記の+-10%の幅で安定しなかった。
 - ファインチューニング、転移学習ともに10 epoch程度で収束した
 - 転移学習が最も早く学習できた
-- EfficientNetがパフォーマンス、学習スピードともに良さげ
+- EfficientNetがパフォーマンス、学習スピードともに良さげ。また評判通り転移学習がやりやすいと感じた。
 - デバッグが難しい。データセットの生成ロジックを変える前は何時間学習しても損失が減らなかったが、変更後は10-100エポックで高いパフォーマンスを出せるようになった
 - callback関数の設定は必須だと思った。ほしい機能は次のもの
-  - 学習精度がnエポックにわたって修練した場合、学習を終了する
+  - 学習精度がnエポックにわたって収斂した場合、学習を終了する
   - 検証データの正解率が悪化し続けるなど、過学習が確認できたら早期終了する
   - nエポックごとにモデルを保存する。＊セッションが切れて学習が無駄になることや、学習を終えたいときにインターバルごとに保存されていると助かる
 
