@@ -56,7 +56,7 @@ python regression.py
 
 
 ## 2-2. CNN(convolutional nueral network)
-- 畳み込み層とプーリング層を繰り返して、画像の特徴を抽出していく(表現学習)
+- 畳み込み層とプーリング層を繰り返して、画像の特徴を抽出していく
 - 抽出された特徴を全結合層に渡して、分類問題などを解く
 
 ![CNN](https://developers.google.com/static/machine-learning/practica/image-classification/images/cnn_architecture.svg)
@@ -202,15 +202,27 @@ keras.applications.ResNet50(
 
 |  モデル名  |  検証データの正解率 | テストデータの正解率 |
 |--------|------|------| 
-| Original |83% | %|
-| ResNet |82% | %|
-| EfficientNet | 83% | %|
+| Original |83% | 44%|
+| ResNet |82% | 44%|
+| EfficientNet | 83% | 77%|
 
 ```bash
-# 0からの学習
-python main.py train -m {original, resnet, efficientnet}
+# 学習
+python main.py train -m {original, resnet, efficientnet} -t {fromzero, transfer_learning, fine_tuning}
 # 推論
-python main.py predict -m {original, resnet, efficientnet}
+python main.py predict -m {original, resnet, efficientnet} -t {fromzero, transfer_learning, fine_tuning}
+
+# オプション
+python main.py --help
+
+usage: main.py [-h] [-m MODEL] [-t TYPE] function_name
+positional arguments:
+  function_name         実行するメソッド名{summary, train, predict}
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MODEL, --model MODEL
+                        学習モデル{original, resnet, efficientnet}
+  -t TYPE, --type TYPE  学習タイプ{fromzero, transfer_learning, fine_tuning}
 ```
 
 #### 5-4. 転移学習、ファインチューニング
@@ -239,4 +251,4 @@ ResNetとEfficientNetを対象に転移学習、ファインチューニング�
 
 ## 6. データ中心のアプローチ
 #### 6-1. 特徴量エンジニアリングと画像拡張
-汎化能力を高めるもう一つのアプローとして、質の高いデータセットをたくさん集めモデルが学習しやすい形に変換して食べさせるデータ中心のアプローチがあるよ。非常に大切な領域なので今後掘り下げていくよ
+汎化能力を高めるもう一つのアプローとして、質の高いデータセットをたくさん集めモデルが学習しやすい形に変換して食べさせるデータ中心のアプローチがあるよ。大切な領域なので今後掘り下げていくよ
